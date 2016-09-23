@@ -13,15 +13,28 @@ server_socket.listen(1)
 
 print "listening"
 
-def callback(pin):
-
-    advertise_service( server_socket, "Window sensor",
+advertise_service( server_socket, "Window sensor",
                    service_id = uuid,
                    service_classes = [ uuid, SERIAL_PORT_CLASS],
                    profiles = [ SERIAL_PORT_PROFILE ],
                    )
-    print "waiting for connection"
 
+print "waiting for connection"
+
+client_socket, client_info = server_socket.accept()
+
+print "accepted"
+
+data = client_socket.recv(1024)
+print "[%s]" % data
+
+while True:
+    time.sleep(1)
+    server_socket.send("alert")
+    server_socket.close()
+    client_socket.close()
+
+def callback(pin):
     client_socket, client_info = server_socket.accept()
 
     print "Accepted"
